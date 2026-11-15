@@ -1,0 +1,2243 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Roma V — Diagnosi DGBI Pediatrica</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --bg: #fffdf2;
+  --surface: #A8D5E3;
+  --surface2: #FF78AC;
+  --border: #2e2e2e;
+  --text: #312208df;
+  --muted: #888;
+  --accent: #f5905a;
+  --accent-dim: rgba(200,245,90,0.12);
+  --red: #ef4646;
+  --red-dim: rgba(255,92,92,0.12);
+  --blue: #5ca8ff;
+  --blue-dim: rgba(92,168,255,0.1);
+  --gold: #f5c84a;
+  --gold-dim: rgba(245,200,74,0.1);
+  --green: #4af5a0;
+  --green-dim: rgba(74,245,160,0.1);
+  --terracotta: #B96F62;
+  --r: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.app-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -0.5px;
+  color: var(--accent);
+}
+.app-logo span { color: var(--muted); font-weight: 400; }
+.btn-restart {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-family: 'Instrument Sans', sans-serif;
+  transition: all 0.15s;
+  display: none;
+}
+.btn-restart:hover { border-color: var(--muted); color: var(--text); }
+.btn-restart.visible { display: block; }
+
+/* PROGRESS BAR */
+.progress-bar {
+  height: 2px;
+  background: var(--border);
+  display: none;
+}
+.progress-bar.visible { display: block; }
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+/* MAIN CONTENT */
+.app-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 40px;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* SCREEN TRANSITIONS */
+.screen {
+  display: none;
+  width: 100%;
+  animation: fadeUp 0.25s ease;
+}
+.screen.active { display: flex; flex-direction: column; gap: 16px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* WELCOME SCREEN */
+.welcome-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-top: 20px;
+}
+.welcome-title em { color: var(--accent); font-style: normal; }
+.welcome-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.welcome-features {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+.feature-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.feature-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #0f0f0f;
+  border: none;
+  padding: 16px 24px;
+  border-radius: var(--r);
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: -0.3px;
+  margin-top: 8px;
+}
+.btn-primary:hover { opacity: 0.9; }
+.btn-primary:active { transform: scale(0.98); }
+
+.disclaimer {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.5;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+
+/* ALARM SCREEN */
+.alarm-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--red-dim);
+  border: 1px solid var(--red);
+  border-radius: var(--r);
+}
+.alarm-icon { font-size: 1.3rem; }
+.alarm-header-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--red); }
+.alarm-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+.alarm-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.alarm-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.alarm-item:hover { border-color: var(--red); }
+.alarm-item.checked {
+  border-color: var(--red);
+  background: var(--red-dim);
+}
+.alarm-checkbox {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.alarm-item.checked .alarm-checkbox {
+  background: var(--red);
+  border-color: var(--red);
+}
+.alarm-checkbox-inner {
+  width: 8px; height: 8px;
+  background: white;
+  border-radius: 2px;
+  display: none;
+}
+.alarm-item.checked .alarm-checkbox-inner { display: block; }
+.alarm-item-text { font-size: 0.85rem; line-height: 1.4; }
+
+.alarm-result {
+  display: none;
+  padding: 16px;
+  border-radius: var(--r);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.alarm-result.danger {
+  display: block;
+  background: var(--red-dim);
+  border: 1px solid var(--red);
+  color: var(--red);
+}
+.alarm-result.safe {
+  display: block;
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+.alarm-result strong { font-weight: 600; display: block; margin-bottom: 4px; }
+
+.btn-secondary {
+  background: var(--terracotta);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 14px 24px;
+  border-radius: var(--r);
+  font-family: 'Syne', sans-serif;
+  font-weight: ;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.15s;
+}
+.btn-secondary:hover { border-color: var(--muted); }
+
+/* QUESTION SCREEN */
+.q-breadcrumb {
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.q-step-label {
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.q-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
+}
+.q-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-left: 3px solid var(--border);
+  border-radius: 0 4px 4px 0;
+}
+
+.answer-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.answer-btn {
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--text);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.answer-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.answer-btn:active { transform: scale(0.99); }
+.answer-prefix {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.answer-btn:hover .answer-prefix {
+  background: var(--accent);
+  color: #0f0f0f;
+}
+
+.btn-back {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 12px 18px;
+  border-radius: var(--r);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s;
+  align-self: flex-start;
+}
+.btn-back:hover { color: var(--text); border-color: var(--muted); }
+
+/* DIAGNOSIS SCREEN */
+.diag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+.diag-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+.diag-code {
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.diag-summary {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.6;
+  padding: 14px 16px;
+  background: var(--surface);
+  border-radius: var(--r);
+  border-left: 3px solid var(--accent);
+}
+
+.btn-deep {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: var(--bg);
+  padding: 14px 18px;
+  border-radius: var(--r);
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.15s;
+}
+.btn-deep:hover { filter: brightness(0.95); }
+.btn-deep-arrow { transition: transform 0.2s; color: var(--bg); }
+.btn-deep.open .btn-deep-arrow { transform: rotate(180deg); color: var(--bg); }
+
+/* TABS */
+.detail-drawer {
+  display: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.detail-drawer.open { display: block; animation: fadeUp 0.2s ease; }
+
+.tab-bar {
+  display: flex;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-btn {
+  padding: 10px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  border-bottom: 2px solid transparent;
+  font-family: 'Instrument Sans', sans-serif;
+}
+.tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+
+.tab-content { display: none; padding: 16px; }
+.tab-content.active { display: block; animation: fadeUp 0.15s ease; }
+
+.tab-section-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  margin-top: 16px;
+}
+.tab-section-title:first-child { margin-top: 0; }
+
+.info-list { display: flex; flex-direction: column; gap: 6px; }
+.info-item {
+  display: flex;
+  gap: 10px;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  padding: 8px 12px;
+  background: var(--surface2);
+  border-radius: 6px;
+}
+.info-item-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.dot-blue { background: var(--blue); }
+.dot-red { background: var(--red); }
+.dot-green { background: var(--green); }
+.dot-gold { background: var(--gold); }
+
+.alarm-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--red-dim);
+  border: 1px solid rgba(255,92,92,0.3);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--red);
+  margin: 3px 3px 3px 0;
+}
+
+.exam-item {
+  padding: 10px 12px;
+  background: var(--surface2);
+  border-radius: 6px;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  border-left: 3px solid var(--green);
+}
+.exam-item.required { border-left-color: var(--gold); }
+.exam-item small { color: var(--muted); font-size: 0.75rem; display: block; margin-top: 2px; }
+
+.therapy-block {
+  margin-bottom: 12px;
+}
+.therapy-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.therapy-item {
+  padding: 8px 12px;
+  background: var(--surface2);
+  border-radius: 6px;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.highlight-box {
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+.highlight-box.warn { background: rgba(245,200,74,0.08); border: 1px solid rgba(245,200,74,0.3); color: var(--gold); }
+.highlight-box.info { background: var(--blue-dim); border: 1px solid rgba(92,168,255,0.3); color: var(--blue); }
+.highlight-box.danger { background: var(--red-dim); border: 1px solid rgba(255,92,92,0.3); color: var(--red); }
+
+/* ALARM STOP SCREEN */
+.stop-icon { font-size: 3rem; text-align: center; }
+.stop-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--red);
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+.stop-body {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+  text-align: center;
+}
+.stop-alarms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.stop-alarm-tag {
+  padding: 6px 12px;
+  background: var(--red-dim);
+  border: 1px solid rgba(255,92,92,0.4);
+  border-radius: 20px;
+  font-size: 0.78rem;
+  color: var(--red);
+}
+
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-logo">DGBI<span> · Roma V</span></div>
+  <button class="btn-restart" id="btnRestart" onclick="restart()">↺ Ricomincia</button>
+</header>
+<div class="progress-bar" id="progressBar">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<main class="app-body">
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN 0 — WELCOME
+  ══════════════════════════════════════════════ -->
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-title">Diagnosi<br><em>DGBI</em><br>Pediatrica</div>
+    <div class="welcome-sub">Strumento decisionale basato sui criteri delle principali <strong>linee guida internazionali</strong> per disturbi di gut-brain interaction in bambini e adolescenti..</div>
+    <div class="welcome-features">
+      <div class="feature-row"><div class="feature-dot"></div>Disturbi GI superiori e inferiori con flowchart navigabile</div>
+      <div class="feature-row"><div class="feature-dot"></div>Red flag check integrato prima della diagnosi</div>
+      <div class="feature-row"><div class="feature-dot"></div>Schede complete alla diagnosi: criteri · esami · terapia</div>
+    </div>
+    <button class="btn-primary" onclick="startAlarm()">Inizia valutazione →</button>
+    <div class="disclaimer">⚕ Strumento di supporto clinico. Non sostituisce il giudizio medico. Basato su linee guida internazionali (ESPGHAN, NASPGHAN, SIGENP) e i Criteri di Roma V</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN 1 — ALARM CHECK
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-alarm">
+    <div class="alarm-header">
+      <div class="alarm-icon">⚠️</div>
+      <div>
+        <div class="alarm-header-text">Verifica segnali di allarme</div>
+        <div class="alarm-sub">Seleziona tutti i presenti. Se anche solo uno è positivo, la diagnosi DGBI non è appropriata se non esclusa prima causa organica.</div>
+      </div>
+    </div>
+
+    <div class="alarm-grid" id="alarmGrid"></div>
+
+    <div class="alarm-result" id="alarmResult"></div>
+
+    <button class="btn-primary" id="btnAlarmNext" onclick="handleAlarmNext()" style="display:none">
+      Nessun segnale presente — Avvia flowchart →
+    </button>
+    <button class="btn-secondary" onclick="showScreen('screen-welcome')" style="margin-top:4px">← Torna all'inizio</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN 2 — QUESTION
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-question">
+    <div style="display:flex; justify-content:space-between; align-items:center">
+      <div class="q-step-label" id="qStepLabel">Step 1</div>
+      <button class="btn-back" id="btnBack" onclick="goBack()">← Indietro</button>
+    </div>
+    <div class="q-breadcrumb" id="qBreadcrumb"></div>
+    <div class="q-text" id="qText"></div>
+    <div class="q-hint" id="qHint" style="display:none"></div>
+    <div class="answer-grid" id="answerGrid"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN 3 — ALARM STOP
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-stop">
+    <div class="stop-icon">🛑</div>
+    <div class="stop-title">Approfondire causa organica</div>
+    <div class="stop-body">Sono presenti uno o più segnali di allarme. La diagnosi di DGBI non è appropriata prima di aver escluso una patologia organica.</div>
+    <div class="stop-alarms" id="stopAlarmsList"></div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6;background:var(--surface);padding:14px;border-radius:8px;border:1px solid var(--border)">
+      Considerare: emocromo, PCR/VES, calprotectina fecale, sierologia celiachia, ecografia addominale. Rivalutare dopo esclusione organica.
+    </div>
+    <button class="btn-primary" onclick="restart()">↺ Nuova valutazione</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN 4 — DIAGNOSIS
+  ══════════════════════════════════════════════ -->
+  <div class="screen" id="screen-diagnosis">
+    <div class="diag-badge">✓ Diagnosi Roma V</div>
+    <div class="diag-title" id="diagTitle"></div>
+    <div class="diag-code" id="diagCode"></div>
+    <div class="diag-summary" id="diagSummary"></div>
+    <button class="btn-deep" id="btnDeep" onclick="toggleDetail()">
+      <span>Approfondisci — criteri · esami · terapia</span>
+      <span class="btn-deep-arrow">↓</span>
+    </button>
+    <div class="detail-drawer" id="detailDrawer">
+      <div class="tab-bar" id="tabBar"></div>
+      <div id="tabContents"></div>
+    </div>
+    <button class="btn-primary" onclick="restart()" style="margin-top:8px">↺ Nuova valutazione</button>
+    <button class="btn-back" onclick="goBack()" style="align-self:center">← Indietro</button>
+  </div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+
+const ALARMS = [
+  "Perdita di peso involontaria o faltering growth",
+  "Sangue nelle feci (rettorragia) non riferibili a emorroidi o ragadi",
+  "Ematemesi",
+  "Febbre ricorrente non spiegata",
+  "Ritardo di crescita staturale o puberale",
+  "Disfagia progressiva o odinofagia",
+  "Sintomi notturni che svegliano il bambino",
+  "Familiarità per IBD, celiachia o neoplasia colorettale",
+  "Anemia, leucocitosi o trombocitopenia",
+  "PCR/VES/calprotectina fecale elevate",
+  "Vomito biliare o a getto",
+  "Massa addominale palpabile",
+  "Deficit neurologici o perdita delle tappe di sviluppo"
+];
+
+// ─── DIAGNOSES DATABASE ──────────────────────────────────────
+const DIAGNOSES = {
+
+  IBS: {
+    title: "Irritable Bowel Syndrome",
+    code: "H1a · Roma V",
+    summary: "Dolore addominale intermittente ≥4 gg/mese correlato alla defecazione o associato a cambiamenti nell'alvo, con dolore come sintomo predominante. Età minima 6 anni.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri diagnostici — tutti obbligatori (≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Dolore addominale intermittente ≥4 giorni/mese associato ad almeno 1 tra: correlato alla defecazione, cambiamento frequenza o forma delle feci</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Il dolore addominale è il <strong>sintomo predominante</strong></div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Sintomi non spiegabili da altra condizione medica</div>
+        </div>
+        <div class="highlight-box warn" style="margin-top:12px">⚠ Esclusione: dolore che si manifesta <em>esclusivamente</em> durante il ciclo mestruale → considerare dismenorrea</div>
+        <div class="tab-section-title" style="margin-top:16px">Sottotipi (Bristol Stool Form Scale)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>IBS-C:</strong> ≥25% feci tipo 1-2 e ≤25% tipo 6-7</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>IBS-D:</strong> ≥25% feci tipo 6-7 e ≤25% tipo 1-2</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>IBS-M:</strong> ≥25% tipo 1-2 e ≥25% tipo 6-7</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>IBS-U:</strong> &lt;25% tipo 1-2 e &lt;25% tipo 6-7</div>
+        </div>`,
+      "Esami": `
+        <div class="tab-section-title">Esami consigliati</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Sierologia celiachia (tTG-IgA) <small>Indicato in IBS-D</small></div>
+          <div class="exam-item required">Calprotectina fecale <small>Screening infiammazione intestinale</small></div>
+          <div class="exam-item">Test parassitologici fecali <small>In base al contesto geografico</small></div>
+          <div class="exam-item">Malassorbimento carboidrati <small>Varianti sucrase-isomaltase in IBS-D con diarrea cronica</small></div>
+          <div class="exam-item">Malassorbimento acidi biliari <small>In IBS-D con feci molli persistenti</small></div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Prima linea</div>
+          <div class="therapy-item">Ipnoterapia (evidenzia piu solida)</div>
+          <div class="therapy-item">terapia cognitivo-comportamentale</div>
+          <div class="therapy-item">PENFS — Stimolazione nervosa percutanea (FDA approvato 11-18 anni)</div>
+          <div class="therapy-item">Analgesici da banco per dolore acuto: Paracetamolo e ibuprofene( attenzione a dosaggio e durata terapia)</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Dieta( attenzione a fattori di rischio per disturbi alimentari) </div>
+          <div class="therapy-item">Low-FODMAP (max 4-6 sett restrizione) — sempre con dietista</div>
+          <div class="therapy-item">Psyllium (fibre solubili) · Capsule di  olio menta piperina gastroresistenti</div>
+          <div class="therapy-item">Simbiotici e Probiotici: Lactobacillus rhamnosus GG</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Farmacologico (per sottotipo)</div>
+          <div class="therapy-item">IBS-C: PEG, se refrattari su indicazione specialistica:  lassativi stimolanti, linaclotide (FDA 6-17 aa)</div>
+          <div class="therapy-item">IBS-D: loperamide, sequestranti acidi biliari( in casi selezionati)</div>
+          <div class="therapy-item">Su indicazione specialistica: Ciproeptadina · Amitriptilina (casi selezionati)</div>
+        </div>`
+    }
+  },
+
+  APS_NOS: {
+    title: "Abdominal Pain Syndrome — NOS",
+    code: "H1b · Roma V",
+    summary: "Dolore addominale intermittente ≥4 gg/mese che non si manifesta esclusivamente durante pasti, defecazione o ciclo. Criteri insufficienti per IBS, dispepsia, AM o BPS.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥2 mesi, ≥4 gg/mese)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Dolore addominale <strong>intermittente</strong> non esclusivamente legato a pasti, defecazione o menses</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Criteri insufficienti per IBS, dispepsia funzionale, emicrania addominale o BPS</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione medica</div>
+        </div>
+        <div class="highlight-box info">ℹ APS-NOS = dolore <strong>intermittente</strong> · CAPS = dolore <strong>continuo</strong></div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Emocromo, PCR, VES</div>
+          <div class="exam-item required">Sierologia celiachia (tTG-IgA)</div>
+          <div class="exam-item required">Calprotectina fecale</div>
+          <div class="exam-item">Non richiesti esami estensivi di routine</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Prima linea (ESPGHAN-NASPGHAN)</div>
+          <div class="therapy-item">CBT e ipnoterapia — raccomandazione forte</div>
+          <div class="therapy-item">PENFS — raccomandazione condizionale</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Farmacologico</div>
+          <div class="therapy-item">Olio menta piperina (casi lievi)</div>
+          <div class="therapy-item">Ciproeptadina · domperidone · probiotici</div>
+          <div class="therapy-item">Antidepressivi triciclici (alcune evidenze)</div>
+        </div>`
+    }
+  },
+
+  BPS: {
+    title: "Biliary Pain Syndrome",
+    code: "H1c · Roma V — Nuovo",
+    summary: "Dolore al quadrante superiore destro episodico, ≥30 min, abbastanza severo da richiedere valutazione urgente, ≥4 gg/mese. Assenza di calcoli biliari o patologia strutturale.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Dolore QSD ± epigastrio ≥4 gg/mese: insorgenza acuta, durata ≥30 min fino a ore, episodico, severo (porta a visita urgente)</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>NON soddisfa criteri per IBS, dispepsia funzionale, emicrania addominale</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>Assenza</strong> di calcoli biliari o patologia strutturale</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione</div>
+        </div>
+        <div class="tab-section-title" style="margin-top:14px">Criteri di supporto (non obbligatori)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue" style="background:var(--muted)"></div>Enzimi epatici, bilirubina, amilasi normali durante/entro pochi giorni dall'episodio</div>
+          <div class="info-item"><div class="info-item-dot dot-blue" style="background:var(--muted)"></div>Nausea/vomito · irradiazione alla schiena/scapola destra · dolore postprandiale · dolore che sveglia</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Ecografia colecisti e vie biliari (obbligatoria — escludere calcoli)</div>
+          <div class="exam-item required">Funzionalità epatica, bilirubina, amilasi/lipasi</div>
+          <div class="exam-item">MRCP se necessario</div>
+          <div class="exam-item">EGD se dolore epigastrico significativo (a discrezione)</div>
+        </div>
+        <div class="highlight-box danger" style="margin-top:10px">✗ NON raccomandato: studio frazione di eiezione colecisti (HIDA scan)</div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Prima scelta — non chirurgico</div>
+          <div class="therapy-item">Antispasmodici · acido ursodesossicolico · neuromodulatori (evidenze limitate)</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Colecistectomia</div>
+          <div class="therapy-item">Solo dopo fallimento di terapie non chirurgiche adeguate</div>
+          <div class="therapy-item">Successo variabile (34-100%) · possibile peggioramento dei sintomi</div>
+          <div class="therapy-item">La discinesia biliare può risolversi spontaneamente</div>
+        </div>`
+    }
+  },
+
+  AM: {
+    title: "Emicrania Addominale",
+    code: "H1d · Roma V",
+    summary: "Episodi parossistici di dolore periombelicale intenso ≥1 ora, invalida le attività, stereotipato, con ≥2 sintomi associati (nausea, vomito, cefalea, fotofobia, pallore). Almeno 2 episodi in 6 mesi.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥2 episodi in 6 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Dolore periombelicale/mediano/diffuso intenso, durata ≥1 ora</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Episodi separati da almeno 1 settimana</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Dolore invalida le attività normali</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Pattern stereotipato nel singolo paziente</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Associato ad almeno <strong>2</strong> tra: anoressia, nausea, vomito, cefalea, fotofobia, pallore</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione, inclusa CVS</div>
+        </div>
+        <div class="highlight-box info">ℹ Se sintomi sovrapposti con sindrome vomito ciclico: il sintomo predominante e più disturbante guida la diagnosi primaria</div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item">Emocromo, elettroliti, glicemia, funzionalità renale ed epatica, amilasi/lipasi, urinocoltura</div>
+          <div class="exam-item">Eventuale presa in carico psicologica o NPI</div>
+          <div class="exam-item">Considerare diagnosi differenziale: pancreatite ricorrente, torsione ovarica, porfirie, angioedema ereditario, FMF</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Profilassi (episodi frequenti/invalidanti)</div>
+          <div class="therapy-item">Su indicazione specialistica: Pizotifene · ciproeptadina · propranololo · flunarizina</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Trattamento acuto dell'episodio</div>
+          <div class="therapy-item">Analgesici come paracetamolo o ibuprofene · riposo · favorire il sonno</div>
+          <div class="therapy-item">Su indicazione specialistica: Pizotifene · sumatriptan · verapamil · topiramato · aprepitant · divalproex sodico</div>
+          <div class="therapy-item">Casi refrattari: diidroergotamina IV</div>
+        </div>`
+    }
+  },
+
+  CAPS: {
+    title: "Centrally Mediated Abdominal Pain Syndrome",
+    code: "H1e · Roma V — Nuovo",
+    summary: "Dolore addominale CONTINUO che limita il funzionamento quotidiano (scuola, sport, vita sociale/familiare). Tipicamente associato a comorbidità psicosociali.",
+    tabs: {
+      "Criteri": `
+        <div class="highlight-box danger">⚠ CAPS = dolore CONTINUO (non intermittente). Se fosse con caratteristiche intermittente; possibile APS-NOS</div>
+        <div class="tab-section-title" style="margin-top:14px">Criteri — tutti obbligatori (≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Dolore addominale <strong>continuo</strong></div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Il dolore <strong>limita il funzionamento quotidiano</strong> (scuola, vita sociale, sport)</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione medica</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Valutazione psicologica approfondita (obbligatoria)</div>
+          <div class="exam-item">Emocromo, PCR, VES, calprotectina fecale, celiachia</div>
+          <div class="exam-item">Valutare differenze di percezione del dolore tra genitore e paziente</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">indicazioni </div>
+          <div class="therapy-item">Invio presso Centro specializzato per presa in carico multidisciplinare</div>
+          <div class="therapy-item">Brain-gut therapies: terapia cognitivo-comportamentale · ipnosi · PENFS</div>
+          <div class="therapy-item">Collaborazione con famiglia e scuola per la gestione del paziente con dolore</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Farmacologico(a disposizione dello specialista)</div>
+          <div class="therapy-item">TCA: amitriptilina, nortriptilina</div>
+          <div class="therapy-item">SSRI: citalopram · Antidepressivi quaternari: mirtazapina</div>
+          <div class="therapy-item">Farmaci per dolore neuropatico: gabapentin, pregabalin</div>
+        </div>`
+    }
+  },
+
+  FC: {
+    title: "Stipsi Funzionale",
+    code: "H2a · Roma V",
+    summary: "Almeno 2 dei 6 criteri di stipsi nell'ultimo mese (≤2 scariche/sett, sforzo, feci dure, ritenzione, massa rettale, feci di grosso calibro). Non soddisfa criteri per IBS.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Almeno 2 dei 6 nell'ultimo mese (≥1 mese)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>≤2 defecazioni/settimana in media</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>≥1 episodio di incontinenza fecale/settimana (solo se già continente)</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Storia di postura ritentiva, sforzo o ritenzione inappropriata di feci</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Defecazione dolorosa o feci dure (Bristol tipo 1-2)</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Presenza di massa fecale nel retto</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Storia di feci di grosso calibro</div>
+        </div>
+        <div class="highlight-box warn" style="margin-top:10px">⚠ Se dolore addominale è il sintomo predominante e migliora con la defecazione → diagnosi di IBS, non FC</div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item">Diagnosi clinica nella maggior parte dei casi</div>
+          <div class="exam-item">Rx addome: non di routine; utile se sospetta massa fecale abbondante (VPP >80%)</div>
+          <div class="exam-item">Marcatori radiopachi per tempo di transito colico (se mancano dati obiettivi)</div>
+          <div class="exam-item required">Se causa organica sospetta: manometria anorettale, biopsia rettale per suzione, clisma opaco</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Educazione e comportamento</div>
+          <div class="therapy-item">Toileting regolare · diario evacuazioni · sistema di ricompensa</div>
+          <div class="therapy-item">Apporto normale di fibre e liquidi</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Disimpaction (se necessaria)</div>
+          <div class="therapy-item">Via orale (PEG) o rettale (clisteri): efficacia equivalente</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Mantenimento (prima linea)</div>
+          <div class="therapy-item">PEG — polietilenglicole (ESPGHAN-NASPGHAN, bambini >6 mesi)</div>
+          <div class="therapy-item">Lassativo stimolante (senna, bisacodil) se risposta insufficiente</div>
+          <div class="therapy-item">Linaclotide (FDA: 6-17 anni, 72 mcg/die) per casi refrattari</div>
+        </div>`
+    }
+  },
+
+  NRFI: {
+    title: "Non retentive Fecal Incontinence",
+    code: "H2b · Roma V",
+    summary: "Defecazione in luoghi inappropriati senza ritenzione fecale, non intenzionale, in bambino già continente.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥1 mese, solo se già continente)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Defecazione in luoghi inappropriati al contesto socioculturale</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>Nessuna evidenza</strong> di ritenzione fecale</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>L'incontinenza <strong>non deve essere intenzionale</strong></div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione medica</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Escludere ritenzione fecale (se presente → FC)</div>
+          <div class="exam-item required">Valutazione psicologica obbligatoria</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Comportamentale</div>
+          <div class="therapy-item">Spiegazione dettagliata a genitore e bambino</div>
+          <div class="therapy-item">Seduta sul WC 5-10 min, ≥3 volte/die (specie al rientro da scuola)</div>
+        </div>
+        <div class="highlight-box danger">✗ NON usare lassativi (possono peggiorare i sintomi)</div>
+        <div class="therapy-block" style="margin-top:10px">
+          <div class="therapy-label">Altro</div>
+          <div class="therapy-item">Fibre: utili in alcuni casi</div>
+          <div class="therapy-item">Stimolazione elettrica transcutanea + terapia convenzionale: evidenza positiva</div>
+        </div>`
+    }
+  },
+
+  DYSCHEZIA: {
+    title: "Dyschezia Infantile",
+    code: "H2c · Roma V",
+    summary: "Lattante <9 mesi con episodi ricorrenti ≥10 min di sforzo visibile per defecare prima del passaggio di feci morbide.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — entrambi obbligatori (lattante &lt;9 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Episodi ricorrenti ≥10 min di sforzo visibile per defecare (riuscito o meno) di feci <strong>morbide</strong>; spesso con urla, pianto, arrossamento del viso</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione medica</div>
+        </div>
+        <div class="highlight-box warn">⚠ Se feci dure → pensare a Stipsi Funzionale</div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item">Anamnesi accurata inclusa dieta; valutazione della crescita</div>
+          <div class="exam-item">Esame fisico con esplorazione rettale per escludere anomalie anorectali</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Rassicurazione del caregiver</div>
+          <div class="therapy-item">Spiegare che il bambino deve imparare a rilassare il pavimento pelvico</div>
+          <div class="therapy-item">Evitare stimolazione rettale</div>
+        </div>
+        <div class="highlight-box info">Lassativi generalmente NON necessari</div>`
+    }
+  },
+
+  PF: {
+    title: "Proctalgia Fugax",
+    code: "H2d · Roma V — Nuovo",
+    summary: "Dolore anorectale intermittente da secondi a minuti, non correlato alla defecazione, assente tra gli episodi.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Dolore intermittente localizzato all'ano-retto, <strong>non correlato alla defecazione</strong></div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Durata da secondi a minuti</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>Assenza</strong> di dolore anorectale tra gli episodi</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione medica</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item">Anamnesi e visita fisica (spesso sufficienti)</div>
+          <div class="exam-item">Se necessario: emocromo, PCR, calprotectina fecale, colonscopia, manometria anorettale</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Maggior parte dei casi: <strong>sola rassicurazione</strong> sulla natura benigna e transitoria</div>
+          <div class="therapy-item">Farmaci solo in casi severi: trinitrato di glicerile 0.2% o diltiazem 2% topico · salbutamolo inalatorio</div>
+        </div>`
+    }
+  },
+
+  FDR: {
+    title: "Diarrea Funzionale",
+    code: "H2e · Roma V",
+    summary: "Evacuazioni indolori frequenti (≥4/die se <4 anni; >2/die se ≥4 anni) con ≥25% feci non formate. Senza dolore come sintomo predominante.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>&lt;4 anni: ≥4 evacuazioni <strong>indolori</strong>/die · ≥4 anni: >2 evacuazioni/die; con ≥25% feci non formate</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Insorgenza tra 6 mesi e 18 anni</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>NON soddisfa criteri per FC, IBS-D, NRFI</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione medica</div>
+        </div>
+        <div class="highlight-box info">ℹ FDr = diarrea senza dolore predominante · IBS-D = dolore come sintomo predominante</div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Escludere: celiachia, IBD, deficit sucrase-isomaltase, cause infettive</div>
+          <div class="exam-item">Emocromo, PCR/VES, calprotectina fecale, sierologia celiachia</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Lattanti/prescolare: generalmente non richiesta terapia medica</div>
+          <div class="therapy-item">Rassicurazione ed educazione sulle abitudini intestinali</div>
+          <div class="therapy-item">Ridurre succhi di frutta e fruttosio nei bambini piccoli</div>
+          <div class="therapy-item">Low-FODMAP nei bambini più grandi</div>
+          <div class="therapy-item">Loperamide · sequestranti acidi biliari · antagonisti 5-HT3 in casi persistenti</div>
+        </div>`
+    }
+  },
+
+  FAB: {
+    title: "Functional Abdominal Bloating",
+    code: "H3a · Roma V — Nuovo",
+    summary: "Gonfiore e/o distensione addominale intermittenti come sintomo predominante, ≥4 gg/mese. Criteri insufficienti per IBS, FC, FDr, aerofagia.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Gonfiore e/o distensione addominale <strong>intermittenti</strong>, ≥4 gg/mese, <strong>sintomi predominanti</strong></div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Criteri insufficienti per IBS, FC, FDr, aerofagia, sindrome da distress postprandiale</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione medica</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item">Breath test all'idrogeno (SIBO/malassorbimento carboidrati)</div>
+          <div class="exam-item">Rx addome se indicato</div>
+          <div class="exam-item required">Escludere: SIBO, celiachia, deficit sucrase-isomaltase</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Identificare e trattare la causa sottostante</div>
+          <div class="therapy-item">Modifiche dietetiche · modulazione del microbioma</div>
+          <div class="therapy-item">Simeticone (antifoaming)</div>
+          <div class="therapy-item">Biofeedback (parete addominotoracica) in casi selezionati</div>
+        </div>`
+    }
+  },
+
+  IDS: {
+    title: "Infant Distress Syndrome",
+    code: "H3b · Roma V — Rinominato (ex Colic)",
+    summary: "Lattante <5 mesi con pianto e agitazione ricorrenti e prolungati senza causa apparente, non prevenibili dai caregiver.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri clinici — tutti obbligatori</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Lattante <strong>&lt;5 mesi</strong> all'insorgenza</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Periodi ricorrenti e prolungati di pianto e agitazione senza causa apparente, non prevenibili/risolvibili dai caregiver</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione medica</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Anamnesi + esame fisico accurato (escludono causa organica nella grande maggioranza)</div>
+          <div class="exam-item required">Urinocoltura (in lattanti afebbrili con pianto eccessivo)</div>
+          <div class="exam-item">Valutare stress, ansia/depressione dei genitori</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Pilastri fondamentali</div>
+          <div class="therapy-item">Validare i sintomi e il peso emotivo dei genitori</div>
+          <div class="therapy-item">Rassicurare: il bambino è sano, IDS è autolimitante</div>
+          <div class="therapy-item">Programmi di parent training con/senza soothing techniques</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Probiotici</div>
+          <div class="therapy-item">Limosilactobacillus reuteri: riduce il pianto di 64,6 min/die (RCT)</div>
+        </div>
+        <div class="highlight-box danger">✗ NON raccomandati: chiropratica, osteopatia, simeticone, PPI, erbe (evidenza molto debole)</div>`
+    }
+  },
+
+  RH: {
+    title: "Reflux Hypersensitivity",
+    code: "G1a · Roma V",
+    summary: "Sintomi esofagei/toracici con endoscopia normale e correlazione POSITIVA tra sintomi e reflusso (acido o non-acido) nonostante normale esposizione acida.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Bambini &lt;8 anni — tutti obbligatori (≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Sintomi intermittenti riferibili a reflusso GE, suggestivi di dolore, più severi del normale per età, impattano QoL, ≥3 gg/sett</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Endoscopia normale + assenza EoE istologica</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Correlazione POSITIVA sintomi-reflusso a pH-impedenza nonostante normale esposizione acida</div>
+        </div>
+        <div class="tab-section-title" style="margin-top:12px">Bambini ≥8 anni — tutti obbligatori</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Dolore retrosternale/pirosi/bruciore alla gola, ≥3 gg/sett, impatta QoL</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Endoscopia normale + assenza EoE istologica</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Correlazione POSITIVA sintomi-reflusso nonostante normale esposizione acida</div>
+        </div>
+        <div class="highlight-box info">ℹ Normale esposizione acida: pH&lt;4 per &lt;12% (lattanti &lt;1 aa) o &lt;6% (bambini &gt;1 aa). Symptom Index ≥50% o SAP >95%</div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">EGD con biopsie esofagee (obbligatoria — escludere EoE e lesioni)</div>
+          <div class="exam-item required">pH-impedenza (obbligatoria — normale esposizione acida + correlazione positiva)</div>
+          <div class="exam-item">Test CYP2C19 se disponibile</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Trial PPI (max 8 settimane) — 0-67% migliorano; se no → test diagnostici</div>
+          <div class="therapy-item">H2RA in attesa endoscopia</div>
+          <div class="therapy-item">Procinetici: 43-66% migliorano con PPI ± procinetici</div>
+          <div class="therapy-item">Neuromodulatori: SSRI (citalopram) · TCA (imipramina, nortriptilina)</div>
+          <div class="therapy-item">CBT · ipnoterapia esofagea · biofeedback</div>
+        </div>`
+    }
+  },
+
+  RNEPD: {
+    title: "Reflux-Negative Esophageal Pain Disorder",
+    code: "G1b · Roma V",
+    summary: "Sintomi esofagei/toracici con endoscopia normale, normale esposizione acida e NESSUNA correlazione tra sintomi e reflusso. Equivalente della Functional Heartburn degli adulti.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Tutti obbligatori (≥2 mesi, ≥3 gg/sett)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Sintomi toracici/esofagei intermittenti che impattano QoL</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Endoscopia normale + assenza EoE istologica</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Esposizione acida esofagea <strong>normale</strong></div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>Nessuna</strong> correlazione temporale tra sintomi ed episodi di reflusso</div>
+        </div>
+        <div class="highlight-box danger">✗ NON indicata chirurgia antireflusso</div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">EGD con biopsie (obbligatoria)</div>
+          <div class="exam-item required">pH-impedenza (obbligatoria — normale esposizione acida E assenza correlazione)</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Trial soppressione acida (time-limited) — probabile risposta placebo</div>
+          <div class="therapy-item">Fluoxetina (mainstay per ipersensibilità viscerale)</div>
+          <div class="therapy-item">Melatonina (alcuni dati vs nortriptilina/placebo)</div>
+          <div class="therapy-item">CBT in combinazione con farmaci</div>
+        </div>`
+    }
+  },
+
+  AEROPHAGIA: {
+    title: "Aerophagia Syndrome",
+    code: "G1c.i · Roma V",
+    summary: "Deglutizione eccessiva di aria con distensione addominale che aumenta progressivamente durante il giorno.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — entrambi obbligatori (≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Deglutizione eccessiva di aria che provoca segni/sintomi fastidiosi</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Distensione addominale da aria intraluminale che <strong>aumenta durante il giorno</strong></div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item">Clinica spesso sufficiente se quadro tipico senza alarm features</div>
+          <div class="exam-item">Rx addome (volumi di aria intestinale senza livelli idroaerei)</div>
+          <div class="exam-item">pH-impedenza o HRIM se incertezza diagnostica</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Distensione severa: SNG o gastrostomia per venting dell'aria</div>
+          <div class="therapy-item">Speech therapy o CBT per ridurre deglutizione di aria</div>
+          <div class="therapy-item">Benzodiazepine in casi severi</div>
+          <div class="therapy-item">Lattanti: considerare diversi sistemi di biberon/tettarella</div>
+        </div>`
+    }
+  },
+
+  SGB: {
+    title: "Supragastric Belching Syndrome",
+    code: "G1c.ii · Roma V",
+    summary: "Episodi di belching ripetitivi originati dall'esofago, fuori dai pasti, non durante il sonno.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — entrambi obbligatori (≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Episodi di belching <strong>ripetitivi</strong> originati dall'esofago</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>NON soddisfa criteri per dispepsia funzionale, GERD-related pain, RNEPD</div>
+        </div>
+        <div class="highlight-box info">ℹ Storia clinica quasi patognomonica: belching multipli ripetuti fuori dai pasti</div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item">Spesso nessun test necessario se storia tipica</div>
+          <div class="exam-item">pH-impedenza o HRIM per conferma se necessario</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Prima linea (RCT in adulti)</div>
+          <div class="therapy-item">Interventi comportamentali: educazione sul disturbo, segnali precoci, esercizi di respirazione → miglioramento fino a 6 mesi</div>
+          <div class="therapy-item">Speech therapy: interventi specifici, efficaci in trial aperto</div>
+        </div>`
+    }
+  },
+
+  RS: {
+    title: "Rumination Syndrome",
+    code: "G3a · Roma V",
+    summary: "Rigurgito ripetuto, apparentemente senza sforzo, durante/dopo i pasti o liquidi. Non si verifica durante il sonno. Non risponde a terapia GERD.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥2 mesi, onset >3 mesi di vita)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Rigurgito ripetuto, apparentemente senza sforzo, di contenuto gastrico — rideglutito/rimasticato/espulso durante o immediatamente dopo pasto o liquidi</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>Non si verifica durante il sonno</strong></div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non risponde a gestione standard GERD o rigurgito infantile</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione; escludere disturbo alimentare</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Osservazione clinica durante/dopo i pasti (spesso sufficiente)</div>
+          <div class="exam-item">HRIM (onde R + movimento retrogrado): per presentazioni atipiche</div>
+          <div class="exam-item">Valutazione psicologica/psichiatrica (>70% adolescenti ha ≥1 comorbidità)</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Primo step</div>
+          <div class="therapy-item">Spiegare fisiopatologia — 23% risoluzione spontanea dopo solo counseling</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Prima linea</div>
+          <div class="therapy-item">Respirazione diaframmatica (DB): efficace in-person e via telemedicina</div>
+          <div class="therapy-item">CBT: complementa la DB, si occupa degli urges premonitori</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Aggiuntivo</div>
+          <div class="therapy-item">Baclofen: sicuro ed efficace in ~50% dei bambini (studio retrospettivo)</div>
+        </div>
+        <div class="highlight-box danger">✗ NON raccomandati: chirurgia antireflusso, tossina botulinica di routine</div>`
+    }
+  },
+
+  CVS: {
+    title: "Cyclic Vomiting Syndrome",
+    code: "G3b · Roma V",
+    summary: "≥4 episodi in 12 mesi di vomito stereotipato di insorgenza acuta, multiple volte/ora, durata 2h-7gg, separati da ≥1 settimana con ritorno al baseline.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Episodi stereotipati di nausea e vomito insorgenza acuta, <strong>multiple volte/ora</strong></div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>≥4 episodi in 12 mesi, durata 2h–7gg</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Episodi separati da almeno 1 settimana</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Ritorno alla salute di base tra gli episodi</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione medica</div>
+        </div>
+        <div class="highlight-box warn">⚠ Adolescenti: valutare CHS se uso prolungato di cannabis</div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Testing metabolico DURANTE l'episodio (prima di liquidi EV) se insorgenza precoce o episodi scatenati da digiuno/proteine</div>
+          <div class="exam-item">Imaging bario, EGD, esami ematici (linee guida NASPGHAN)</div>
+          <div class="exam-item">Test THC urinario in adolescenti</div>
+          <div class="exam-item">TC/RMN cranio se sintomi neurologici</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Stile di vita (tutti)</div>
+          <div class="therapy-item">Evitamento trigger · riconoscimento precoce del prodromo</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Terapia abortiva (inizio precoce)</div>
+          <div class="therapy-item">Antimigraneosi · antiemetici · analgesici · sedativi (via non orale se possibile)</div>
+        </div>
+        <div class="therapy-block">
+          <div class="therapy-label">Terapia profilattica (episodi frequenti)</div>
+          <div class="therapy-item">Per episodi frequenti o prolungati che compromettono il funzionamento</div>
+        </div>`
+    }
+  },
+
+  CNS: {
+    title: "Chronic Nausea Syndrome",
+    code: "G3c · Roma V — Rinominato",
+    summary: "Nausea fastidiosa come sintomo predominante ≥2 volte/settimana, non associata a vomito. Frequente associazione con POTS e disturbi autonomici.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Nausea fastidiosa come <strong>sintomo predominante</strong>, ≥2 volte/settimana</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>Non associata a vomito</strong></div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione medica</div>
+        </div>
+        <div class="highlight-box warn">⚠ Valutare POTS se nausea mattutina con sintomi di disfunzione autonomica</div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item">Esami di routine: raramente forniscono diagnosi alternative</div>
+          <div class="exam-item required">EGD: NON raccomandata di routine — solo se red flags</div>
+          <div class="exam-item required">Studio svuotamento gastrico: NON di routine — solo se vomito severo o diagnosi incerta</div>
+          <div class="exam-item">Valutazione POTS se sospetta disfunzione autonomica</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Ipnoterapia: più efficace della cura medica standard a breve termine</div>
+          <div class="therapy-item">Ondansetron · domperidone · ciproeptadina · aprepitant · amitriptilina</div>
+          <div class="therapy-item">Mirtazapina: riservata a casi refrattari</div>
+          <div class="therapy-item">IPBI (tossina botulinica intrapiltorica): promettente, effetti fino a 3 mesi</div>
+          <div class="therapy-item">Supporto: idratazione, sonno, esercizio, sale (specie in POTS)</div>
+        </div>`
+    }
+  },
+
+  FD_PDS: {
+    title: "Functional Dyspepsia — PDS",
+    code: "G3d.i · Roma V",
+    summary: "Pienezza postprandiale fastidiosa e/o sazietà precoce che impedisce di completare un pasto adeguato. ≥3 giorni/settimana entro 2 ore dall'assunzione del pasto.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Almeno 1 dei 2 (≥3 gg/sett, ≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Pienezza postprandiale fastidiosa che si verifica con il completamento di un pasto adeguato all'età (entro 2 ore)</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Sazietà precoce che impedisce di completare un pasto adeguato all'età</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">EGD: NON di routine — indicata in casi selezionati (sintomi >6 mesi, alarm features, familiarità per ulcera)</div>
+          <div class="exam-item required">H. pylori: NON richiede testing di routine nella dispepsia pediatrica</div>
+          <div class="exam-item">Studio svuotamento gastrico: indicato in PDS intrattabile</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-label">Indicazioni;</div>
+          <div class="therapy-item">Spiegare la natura biopsicosociale; discutere i fattori scatenanti;</div>
+          <div class="therapy-item">Presa in carico presso Gastroneterologo Pediatrico;</div>
+          <div class="therapy-item">Procinetici (prucalopride, domperidone) se svuotamento gastrico anomalo</div>
+          <div class="therapy-item">Mirtazapina: 76% miglioramento; 45% risoluzione completa</div>
+          <div class="therapy-item">Ciproeptadina: efficace per FD</div>
+          <div class="therapy-item">IPBI + dilatazione pilorica: 76% vs 49% nei controlli</div>
+        </div>
+        <div class="highlight-box danger">✗ NON raccomandate diete restrittive (low-FODMAP, gluten-free, dairy-free)</div>`
+    }
+  },
+
+  FD_EPS: {
+    title: "Functional Dyspepsia — EPS",
+    code: "G3d.ii · Roma V",
+    summary: "Dolore o bruciore localizzato esclusivamente all'epigastrio, ≥1 giorno/settimana, che interferisce con la funzione o la QoL.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Almeno 1 dei 4 (≥1 gg/sett, ≥2 mesi)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Dolore o bruciore localizzato all'<strong>epigastrio</strong></div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Il dolore <strong>non è presente</strong> in altra regione addominale o toracica</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Sintomi possono essere indotti/peggiorati postprandialmente o indipendenti dai pasti — ma NON si soddisfano i criteri PDS</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Non spiegabile da altra condizione inclusi dolore funzionale o IBS</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">EGD: NON di routine — indicata in casi selezionati</div>
+          <div class="exam-item required">H. pylori: NON richiede testing di routine</div>
+          <div class="exam-item">Ecografia/HIDA scan: riservata a dolore quadrante superiore destro</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Soppressione acida con inibitori di pompa protonico (ruolo limitato) per sintomi di tipo EPS</div>
+          <div class="therapy-item">antidepressivi triciclici a basse dosi se refrattario (indicazione specialistica)</div>
+          <div class="therapy-item">Ipnoterapia · PENFS</div>
+        </div>`
+    }
+  },
+
+  MTFFD: {
+    title: "Medically Triggered Functional Feeding Disorder",
+    code: "G2d · Roma V — Nuovo",
+    summary: "Disturbo alimentare che persiste dopo la risoluzione della condizione medica sottostante, con regressione o mancata progressione delle abilità alimentari precedentemente acquisite.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — entrambi obbligatori (≥1 mese)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Si è sviluppato nel contesto di una condizione medica ma persiste dopo la sua risoluzione/trattamento adeguato</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div><strong>Regressione o mancata progressione</strong> delle abilità alimentari precedentemente acquisite, non attribuibile alla condizione medica</div>
+        </div>
+        <div class="highlight-box warn">⚠ Se la condizione medica è ancora attiva → non è MTFFD ma feeding disorder medicamente motivato (non funzionale)</div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Qualsiasi test per assicurarsi che il disturbo sottostante sia adeguatamente trattato</div>
+          <div class="exam-item">Eventuale EGD superiore</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Cura interdisciplinare: gastroenterologo · deglucologo · psicologo</div>
+          <div class="therapy-item">Approccio multidisciplinare per progressione orale</div>
+        </div>`
+    }
+  },
+
+  ARF: {
+    title: "Anticipatory Restrictive Feeding",
+    code: "G2b · Roma V — Nuovo",
+    summary: "Disturbo alimentare guidato dalla paura anticipatoria di esperienze avverse durante il pasto (nausea, dolore, soffocamento). >80% ha sintomi GI sottostanti.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Almeno 1 dei 4 (≥1 mese)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Significativa perdita di peso o faltering growth</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Significativa carenza nutrizionale</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Dipendenza da alimentazione enterale o supplementi nutrizionali</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Marcata interferenza con il funzionamento psicosociale</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">EGD superiore (EoE nel 15% dei bambini con feeding disorders)</div>
+          <div class="exam-item">Emocromo, elettroliti, TSH, FT4, celiachia; vitamine se storia suggestiva</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">CBT per adolescenti con ARF</div>
+          <div class="therapy-item">Esposizione graduale ai cibi temuti (fear/avoidance hierarchies)</div>
+          <div class="therapy-item">Gestione nutrizionale ambulatoriale: vitamine, formula completa</div>
+        </div>
+        <div class="highlight-box danger">✗ NON raccomandate diete restrittive (low-FODMAP, gluten-free, dairy-free) → aumentano l'ansia</div>`
+    }
+  },
+
+  HD: {
+    title: "Hypersensitive Dysphagia",
+    code: "G2a · Roma V — Nuovo",
+    summary: "Percezione di liquidi e/o cibi solidi che transitano anomalmente attraverso orofaringe o esofago, con anatomia e motilità normali.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥1 mese)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Assenza di anomalie mucosali o strutturali faringee/esofagee</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Assenza di importanti disturbi motori esofagei</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Assenza di anomalie del transito del bolo</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">EGD (EoE nel 15% dei bambini con feeding disorders)</div>
+          <div class="exam-item required">HRIM ± impedenza</div>
+          <div class="exam-item">Video Fluoroscopic Swallow Study · timed barium esophagram</div>
+          <div class="exam-item">TSH, FT4; emocromo, elettroliti, celiachia</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Esposizione terapeutica + discrimination training + ristrutturazione cognitiva</div>
+          <div class="therapy-item">Rivalutare condizione medica se interventi comportamentali inefficaci</div>
+          <div class="therapy-item">Neuromodulatori (gabapentin, TCA, mirtazapina) in piccole serie di casi</div>
+        </div>`
+    }
+  },
+  CHS: {
+    title: "Cannabinoid Hyperemesis Syndrome",
+    code: "G3b.i. · Roma V — Nuovo",
+    summary: "Cicli ricorrenti di nausea e vomito in pazienti con uso cronico di cannabis.",
+    tabs: {
+      "Criteri": `
+        <div class="tab-section-title">Criteri — tutti obbligatori (≥1 mese)</div>
+        <div class="info-list">
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Episodi stereotipati di vomito simili a CVS (insorgenza, durata e frequenza)</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Presentazione dopo uso prolungato (1-2 anni) ed eccessivo (quasi quotidiano) di cannabis</div>
+          <div class="info-item"><div class="info-item-dot dot-blue"></div>Risoluzione degli episodi con cessazione sostenuta (almeno 6 mesi) del cannabis</div>
+        </div>`,
+      "Esami": `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="exam-item required">Test THC urinario positivo (livelli elevati di THC-COOH = uso cronico)</div>
+          <div class="exam-item required">Diagnosi solo se sintomi migliorano con cessazione sostenuta (evitare misdiagnosi in pazienti CVS con uso occasionale di THC).</div>
+        </div>`,
+      "Terapia": `
+        <div class="therapy-block">
+          <div class="therapy-item">Stessa gestione acuta del CVS (abortiva e preventiva)</div>
+          <div class="therapy-item">Cessazione della cannabis come gestione a lungo termine (graduale riduzione; prodotti a basso THC)</div>
+          <div class="therapy-item">TCA (amitriptilina) come terapia di mantenimento</div>
+        </div>`
+    }
+  },
+  GERD:{
+    title:"Malattia da Reflusso Gastroesofageo",code:"Patologia Organica · NASPGHAN-ESPGHAN & SIP-SIGENP",
+    summary:"Il reflusso (GER) è fisiologico; nel lattante il rigurgito è comune e si risolve entro 12-14 mesi. Si parla di malattia (GERD) solo quando il reflusso causa sintomi fastidiosi o complicanze. Da distinguere dai disturbi esofagei funzionali (RH/RNEPD), che hanno esposizione acida normale.",
+    tabs:{
+      "Criteri":`<div class="hbox warn" style="background:#fff6ee;border-color:#f0c9a6;color:#c2600f;margin-top:0">⚠ Patologia organica, non un DGBI. Il reflusso fisiologico va distinto dalla malattia.</div>
+        <div class="tsec" style="margin-top:12px">Definizione e diagnosi</div><div class="ilist">
+        <div class="iitem"><div class="idot db"></div>Sintomi fastidiosi e/o complicanze (esofagee o extra-esofagee) dovuti al reflusso di contenuto gastrico in esofago</div>
+        <div class="iitem"><div class="idot db"></div><strong>Neonati/lattanti/bambini piccoli:</strong> diagnosi SOLO se esofagite da reflusso all'endoscopia/biopsia O pH-MII patologica</div>
+        <div class="iitem"><div class="idot db"></div><strong>Bambini grandi/adolescenti:</strong> pirosi, dolore epigastrico e rigurgito che si risolvono con terapia antireflusso</div>
+      </div>
+      <div class="tsec" style="margin-top:12px">Presentazioni</div><div class="ilist">
+        <div class="iitem"><div class="idot dg" style="background:var(--muted)"></div>Lattante: rigurgito/vomito, irritabilità, difficoltà di alimentazione</div>
+        <div class="iitem"><div class="idot dg" style="background:var(--muted)"></div>Extra-esofagee: tosse cronica, raucedine, laringite (se con pirosi/dolore epigastrico)</div>
+        <div class="iitem"><div class="idot dg" style="background:var(--muted)"></div>Sindrome di Sandifer: torcicollo episodico con estensione/rotazione del collo</div>
+      </div>
+      <div class="hbox info">ℹ Fenotipi a pH-MII: GERD acido/non-acido, NERD, esofago ipersensibile (= RH). Escludere sempre l'esofagite eosinofila (EoE) con biopsie.</div>`,
+      "Allarmi":`<div class="tsec">Red flag</div><div class="ilist">
+        <div class="iitem"><div class="idot dr"></div>Scarso accrescimento / arresto di crescita</div>
+        <div class="iitem"><div class="idot dr"></div>Ematemesi, disfagia, odinofagia</div>
+        <div class="iitem"><div class="idot dr"></div>Difficoltà di alimentazione, distress persistente</div>
+        <div class="iitem"><div class="idot dr"></div>Sintomi persistenti oltre i 12-18 mesi o a esordio tardivo</div>
+        <div class="iitem"><div class="idot dr"></div>Vomito biliare o proiettile, sintomi notturni</div>
+      </div>
+      <div class="tsec" style="margin-top:12px">Categorie ad alto rischio</div><div class="ilist">
+        <div class="iitem"><div class="idot dr"></div>Compromissione neurologica, disturbi neuromotori</div>
+        <div class="iitem"><div class="idot dr"></div>Malformazioni gastroesofagee (es. atresia esofagea), fibrosi cistica</div>
+        <div class="iitem"><div class="idot dr"></div>Prematurità, obesità</div>
+        <div class="iitem"><div class="idot dr"></div>Sindromi (Down, Rett, Cornelia de Lange, CHARGE, VACTERL, ASD)</div>
+      </div>`,
+      "Esami":`<div class="tsec">Esami indicati</div>
+        <div class="exam-item">Trial empirico PPI 4-8 settimane: approccio iniziale nei bambini grandi/adolescenti con pirosi tipica; test se non responsivi</div>
+        <div class="exam-item req">Endoscopia + biopsie esofagee: per valutare complicanze o malattia mucosale e prima di escalation terapeutica (conferma/esclude esofagite ed EoE)</div>
+        <div class="exam-item req">pH-impedenza (pH-MII): sintomi persistenti inspiegati, per caratterizzare reflusso e fenotipi</div>
+        <div class="exam-item">Bario ed ecografia: solo per escludere anomalie anatomiche · Manometria: solo se sospetto disturbo della motilità</div>
+        <div class="hbox danger">✗ NON usare per la diagnosi: pasto baritato, ecografia, EGDS di per sé, manometria, scintigrafia, pepsina salivare, biomarcatori extraesofagei, sonda transpilorica/digiunale. NON il trial di PPI come test diagnostico nel lattante né nei sintomi extraesofagei.</div>`,
+      "Terapia":`<div class="tblock"><div class="tlabel">Misure conservative (prima linea, lattante)</div>
+        <div class="titem">Sostenere l'allattamento al seno; rassicurazione ed educazione dei genitori</div>
+        <div class="titem">Valutare/correggere l'ipernutrizione (overfeeding)</div>
+        <div class="titem">Formule ispessite nel lattante a termine con rigurgiti persistenti</div>
+        <div class="titem">Formula estensivamente idrolizzata se si sospetta APLV</div>
+        <div class="titem" style="color:var(--red)">Alginati: NON prima scelta nel trattamento cronico</div>
+        <div class="titem">Misure posturali nei più grandi; NON di routine nel lattante che dorme</div></div>
+        <div class="tblock"><div class="tlabel">Farmacologico</div>
+        <div class="titem">PPI: prima linea nell'esofagite da reflusso; trial 4-8 sett negli adolescenti; rivalutare e deprescrivere</div>
+        <div class="titem">H2RA: alternativa ai PPI (se non disponibili o controindicati)</div>
+        <div class="titem">NON i PPI per pianto/distress o rigurgito del lattante, né empirici per sintomi extra-esofagei isolati</div></div>
+        <div class="hbox danger">✗ NON raccomandati: procinetici (metoclopramide, domperidone, eritromicina, betanecolo); antiacidi/alginati per il trattamento cronico; massoterapia, probiotici/prebiotici e fitoterapici per il GERD</div>
+        <div class="tblock" style="margin-top:10px"><div class="tlabel">GERD refrattario (dopo terapia ottimale)</div>
+        <div class="titem">Baclofen: da considerare prima della chirurgia quando gli altri trattamenti falliscono</div>
+        <div class="titem">Alimentazione transpilorica/digiunale: alternativa alla fundoplicatio</div>
+        <div class="titem">Fundoplicatio: solo con evidenza oggettiva e indicazioni specifiche, in decisione condivisa; non di routine</div>
+        <div class="titem">Disconnessione esofagogastrica totale: NON di prima linea, solo come rescue (compromissione neurologica + fundoplicatio fallita)</div>
+        <div class="titem">Ablazione a radiofrequenza: NON raccomandata</div></div>`
+    }
+  },
+
+
+
+
+
+};
+
+// ═══════════════════════════════════════════════════════════
+// FLOWCHART NODES
+// ═══════════════════════════════════════════════════════════
+
+const NODES = {
+
+  START: {
+    step: "Sintomo principale",
+    breadcrumb: "",
+    text: "Qual è il sintomo predominante che porta il paziente?",
+    hint: null,
+    answers: [
+      { label: "Dolore / bruciore / disagio addominale o toracico", next: "A1" },
+      { label: "Nausea senza vomito predominante", next: "B1" },
+      { label: "Vomito ripetuto o rigurgito", next: "C1" },
+      { label: "Difficoltà / rifiuto ad alimentarsi", next: "D1" },
+      { label: "Alterazioni dell'alvo (stipsi / diarrea / incontinenza fecale)", next: "E1" },
+      { label: "Gonfiore o distensione addominale come sintomo predominante", next: "F1" },
+      { label: "Belching / eruttazioni eccessive come sintomo predominante", next: "G1" },
+      { label: "Dolore anorectale intermittente", next: "H1" },
+      { label: "Pianto eccessivo in lattante < 5 mesi", next: "I1" }
+    ]
+  },
+
+  // ─── RAMO A ────────────────────────────────────────────
+  A1: {
+    step: "Dolore — Continuità",
+    breadcrumb: "Dolore/disagio",
+    text: "Il dolore è CONTINUO, presente quasi sempre durante il giorno?",
+    hint: "Se il bambino ha dolore quasi sempre, senza periodi liberi significativi → continuo. Se ci sono periodi senza dolore → intermittente.",
+    answers: [
+      { label: "Sì — dolore continuo, quasi sempre presente", next: "DIAG:CAPS" },
+      { label: "No — dolore intermittente con periodi liberi", next: "A2" }
+    ]
+  },
+  A2: {
+    step: "Dolore — Localizzazione",
+    breadcrumb: "Dolore intermittente",
+    text: "Dove è localizzato principalmente il dolore?",
+    hint: null,
+    answers: [
+      { label: "Quadrante superiore destro (zona colecisti) con/senza epigastrio", next: "A3" },
+      { label: "Epigastrio (stomaco) — non si irradia altrove", next: "A4b" },
+      { label: "Periombelicale / diffuso / mediano", next: "A5" },
+      { label: "Retrosternale / toracico / alla gola", next: "A8" },
+      { label: "Diffuso o variabile — non localizzato chiaramente", next: "A7" }
+    ]
+  },
+  A3: {
+    step: "Dolore QSD",
+    breadcrumb: "QSD / biliary",
+    text: "Il dolore al quadrante superiore destro ha TUTTE queste caratteristiche: insorgenza acuta, dura ≥30 minuti, è abbastanza severo da richiedere una valutazione medica urgente?",
+    hint: "BPS richiede episodi distinti, non un dolore cronico lieve.",
+    answers: [
+      { label: "Sì — tutte e tre le caratteristiche presenti", next: "A3b" },
+      { label: "No — il dolore non è così acuto/episodico", next: "A4b" }
+    ]
+  },
+  A3b: {
+    step: "Esclusione calcoli",
+    breadcrumb: "QSD acuto",
+    text: "È stata eseguita un'ecografia colecisti/vie biliari?",
+    hint: "La BPS richiede ASSENZA di calcoli biliari o patologia strutturale. Se l'eco non è stata fatta, va prescritta prima di concludere la diagnosi.",
+    answers: [
+      { label: "Sì — ecografia negativa per calcoli e patologia strutturale", next: "DIAG:BPS" },
+      { label: "Sì — ecografia POSITIVA per calcoli o patologia", next: "STOP_ORGANIC" },
+      { label: "Non ancora eseguita — da prescrivere", next: "DIAG:BPS_ECO" }
+    ]
+  },
+  A4b: {
+    step: "Dispepsia",
+    breadcrumb: "Epigastrio",
+    text: "Il dolore/bruciore epigastrico è associato a pienezza postprandiale o sazietà precoce che impedisce di finire un pasto?",
+    hint: "Pienezza postprandiale = sensazione fastidiosa di cibo che rimane nello stomaco dopo il pasto. Sazietà precoce = non riesce a finire un pasto normale.",
+    answers: [
+      { label: "Sì — c'è pienezza postprandiale o sazietà precoce predominante", next: "DIAG:FD_PDS" },
+      { label: "No — solo dolore/bruciore epigastrico, senza pienezza o sazietà precoce", next: "DIAG:FD_EPS" }
+    ]
+  },
+  A5: {
+    step: "Dolore diffuso",
+    breadcrumb: "Dolore periombelicale",
+    text: "Il dolore è parossistico (episodico, intenso), dura almeno 1 ora per episodio e INVALIDA completamente le normali attività durante l'episodio?",
+    hint: null,
+    answers: [
+      { label: "Sì — episodi intensi, invalida le attività, dura ≥1 ora", next: "A6" },
+      { label: "No — dolore più lieve o non così invalidante", next: "A7" }
+    ]
+  },
+  A6: {
+    step: "Emicrania Addominale",
+    breadcrumb: "Dolore parossistico",
+    text: "Durante gli episodi di dolore sono presenti almeno 2 di questi: anoressia, nausea, vomito, cefalea, fotofobia, pallore?",
+    hint: "Devono essere presenti ALMENO 2 dei 6 sintomi associati.",
+    answers: [
+      { label: "Sì — almeno 2 dei sintomi associati presenti", next: "A6b" },
+      { label: "No — nessuno o solo 1 dei sintomi associati", next: "A7" }
+    ]
+  },
+  A6b: {
+    step: "Emicrania Addominale — episodi",
+    breadcrumb: "Emicrania addominale",
+    text: "Si sono verificati almeno 2 episodi simili separati da almeno 1 settimana l'uno dall'altro?",
+    hint: null,
+    answers: [
+      { label: "Sì — almeno 2 episodi separati da ≥1 settimana", next: "DIAG:AM" },
+      { label: "No — finora solo 1 episodio", next: "A7" }
+    ]
+  },
+  A7: {
+    step: "Correlazione defecazione",
+    breadcrumb: "Dolore addominale",
+    text: "Il dolore addominale è correlato alla defecazione (migliora o peggiora con la scarica) OPPURE c'è un cambiamento nelle abitudini intestinali (frequenza o forma delle feci)?",
+    hint: "IBS richiede che il dolore sia il sintomo predominante E che sia correlato all'alvo.",
+    answers: [
+      { label: "Sì — il dolore è chiaramente correlato alla defecazione o all'alvo", next: "DIAG:IBS" },
+      { label: "No — il dolore non è correlato all'alvo", next: "A9" }
+    ]
+  },
+  A8: {
+    step: "Dolore toracico/esofageo",
+    breadcrumb: "Dolore retrosternale",
+    text: "È stata eseguita un'endoscopia GI superiore con biopsie E un pH-impedenza (o pH-metria)?",
+    hint: "Senza questi due esami non si può distinguere tra RH, RNEPD e GERD.",
+    answers: [
+      { label: "Sì — entrambi eseguiti", next: "A8b" },
+      { label: "No o solo uno dei due", next: "RH_PENDING" }
+    ]
+  },
+  A8b: {
+    step: "Risultato pH-impedenza",
+    breadcrumb: "Dolore esofageo — esami",
+    text: "Qual è il risultato di endoscopia + pH-impedenza?",
+    hint: "Normale esposizione acida = pH<4 per <12% del tempo (lattanti <1 aa) o <6% (bambini >1 aa).",
+    answers: [
+      { label: "Endoscopia normale + esposizione acida normale + correlazione POSITIVA sintomi-reflusso", next: "DIAG:RH" },
+      { label: "Endoscopia normale + esposizione acida normale + correlazione NEGATIVA (nessuna correlazione)", next: "DIAG:RNEPD" },
+      { label: "Esposizione acida PATOLOGICA o endoscopia anomala", next: "DIAG:GERD" },
+    ]
+  },
+  A9: {
+    step: "APS-NOS",
+    breadcrumb: "Dolore intermittente aspecifico",
+    text: "Il dolore si manifesta ESCLUSIVAMENTE durante i pasti, la defecazione o il ciclo mestruale?",
+    hint: "APS-NOS esclude il dolore che si verifica SOLO in questi contesti.",
+    answers: [
+      { label: "No — il dolore NON è esclusivamente legato a pasti/defecazione/ciclo", next: "DIAG:APS_NOS" },
+      { label: "Sì — il dolore si manifesta solo in questi contesti", next: "START" }
+    ]
+  },
+
+  // ─── RAMO B ────────────────────────────────────────────
+  B1: {
+    step: "Nausea",
+    breadcrumb: "Nausea",
+    text: "La nausea è associata a episodi di vomito ripetuto?",
+    hint: null,
+    answers: [
+      { label: "Sì — ci sono anche episodi di vomito", next: "C1" },
+      { label: "No — nausea isolata senza vomito", next: "B2" }
+    ]
+  },
+  B2: {
+    step: "Nausea cronica",
+    breadcrumb: "Nausea isolata",
+    text: "La nausea fastidiosa è presente come sintomo predominante almeno 2 volte/settimana da almeno 2 mesi?",
+    hint: null,
+    answers: [
+      { label: "Sì", next: "DIAG:CNS" },
+      { label: "No — troppo recente o non così frequente", next: "FOLLOWUP" }
+    ]
+  },
+
+  // ─── RAMO C ────────────────────────────────────────────
+  C1: {
+    step: "Vomito — Carattere",
+    breadcrumb: "Vomito/rigurgito",
+    text: "Il vomito/rigurgito è RIPETUTO, apparentemente senza sforzo, durante o immediatamente dopo i pasti, e NON si verifica durante il sonno?",
+    hint: "Rumination = rigurgito effortless, il contenuto arriva in bocca e viene spit out o rideglutito. Diverso dal vomito con retching.",
+    answers: [
+      { label: "Sì — rigurgito senza sforzo, post-prandiale, non durante il sonno", next: "C2" },
+      { label: "No — vomito con sforzo/retching o avviene anche di notte", next: "C3" }
+    ]
+  },
+  C2: {
+    step: "Rumination — GERD",
+    breadcrumb: "Rigurgito effortless",
+    text: "Il rigurgito NON risponde alla terapia standard per GERD (PPI, posizionamento)?",
+    hint: null,
+    answers: [
+      { label: "Corretto — non risponde al trattamento GERD", next: "DIAG:RS" },
+      { label: "Risponde al trattamento GERD", next: "STOP_ORGANIC" }
+    ]
+  },
+  C3: {
+    step: "Vomito — Ciclicità",
+    breadcrumb: "Vomito",
+    text: "Il vomito è EPISODICO — si presentano episodi distinti di vomito intenso (multiple volte/ora) con periodi completamente liberi da sintomi tra un episodio e l'altro?",
+    hint: null,
+    answers: [
+      { label: "Sì — episodi distinti con ritorno al baseline", next: "C4" },
+      { label: "No — vomito cronico o continuo", next: "D1" }
+    ]
+  },
+  C4: {
+    step: "CVS — Criteri",
+    breadcrumb: "Vomito ciclico",
+    text: "Si sono verificati almeno 4 episodi negli ultimi 12 mesi, ciascuno durato tra 2 ore e 7 giorni, separati da almeno 1 settimana?",
+    hint: null,
+    answers: [
+      { label: "Sì — ≥4 episodi che soddisfano i criteri", next: "C5" },
+      { label: "No — meno episodi o criteri non soddisfatti", next: "FOLLOWUP" }
+    ]
+  },
+  C5: {
+    step: "Cannabis",
+    breadcrumb: "CVS",
+    text: "Il paziente fa uso di cannabis in modo prolungato (quasi quotidiano da ≥1-2 anni)?",
+    hint: "CHS è un sottotipo di CVS che si verifica specificamente per uso cronico di cannabis.",
+    answers: [
+      { label: "No — nessun uso di cannabis", next: "DIAG:CVS" },
+      { label: "Sì — uso prolungato e quasi quotidiano di cannabis", next: "DIAG:CHS" }
+    ]
+  },
+
+  // ─── RAMO D ────────────────────────────────────────────
+  D1: {
+    step: "Feeding — Regressione",
+    breadcrumb: "Difficoltà alimentari",
+    text: "Le difficoltà alimentari sono iniziate in concomitanza con una condizione medica (es. GERD severo, EoE) che ora è stata trattata/risolta, con regressione delle abilità alimentari precedentemente acquisite?",
+    hint: "MTFFD = la condizione medica deve essere risolta. Se ancora attiva → non è un disturbo funzionale.",
+    answers: [
+      { label: "Sì — condizione medica risolta ma difficoltà alimentari persistono con regressione delle abilità", next: "DIAG:MTFFD" },
+      { label: "No — nessuna condizione medica pregressa o ancora attiva", next: "D2" }
+    ]
+  },
+  D2: {
+    step: "Feeding — Paura",
+    breadcrumb: "Feeding disorder",
+    text: "Il bambino evita i pasti per PAURA anticipatoria di conseguenze negative (nausea, dolore, soffocamento, vomito) — senza regressione delle abilità di deglutizione?",
+    hint: "ARF = la paura è il motore. >80% ha sintomi GI sottostanti. Non c'è perdita di skills.",
+    answers: [
+      { label: "Sì — paura anticipatoria del pasto come meccanismo principale", next: "DIAG:ARF" },
+      { label: "No — non c'è paura anticipatoria", next: "D3" }
+    ]
+  },
+  D3: {
+    step: "Feeding — Disfagia",
+    breadcrumb: "Feeding disorder",
+    text: "Il bambino percepisce i cibi o liquidi come 'bloccati' o che transitano in modo anomalo, nonostante l'anatomia e la motilità risultino normali agli esami?",
+    hint: "HD = sensazione di disfagia senza causa strutturale o motoria.",
+    answers: [
+      { label: "Sì — sensazione di blocco/transito anomalo", next: "DIAG:HD" },
+      { label: "No", next: "D4" }
+    ]
+  },
+  D4: {
+    step: "Hunger drive",
+    breadcrumb: "Feeding disorder",
+    text: "Il bambino non sente mai fame spontaneamente e non mangerebbe se non venisse sollecitato o programmato il pasto?",
+    hint: null,
+    answers: [
+      { label: "Sì — ridottissima sensazione di fame spontanea", next: "DIAG:HDD_R" },
+      { label: "No — al contrario: mangia eccessivamente o non riesce a smettere", next: "DIAG:HDD_E" }
+    ]
+  },
+
+  // ─── RAMO E ────────────────────────────────────────────
+  E1: {
+    step: "Alvo — Dolore predominante?",
+    breadcrumb: "Alterazioni alvo",
+    text: "Il DOLORE ADDOMINALE è il sintomo predominante (non le modifiche dell'alvo di per sé)?",
+    hint: "In IBS il dolore è sempre il centro. Se il paziente lamenta principalmente stitichezza o diarrea senza dolore significativo → non è IBS.",
+    answers: [
+      { label: "Sì — il dolore addominale è il problema principale", next: "A7" },
+      { label: "No — i problemi dell'alvo sono il problema principale", next: "E2" }
+    ]
+  },
+  E2: {
+    step: "Stipsi",
+    breadcrumb: "Alvo",
+    text: "Sono presenti almeno 2 dei seguenti nell'ultimo mese: ≤2 scariche/sett · feci dure/dolorose · sforzo/ritenzione · massa rettale · feci grosso calibro · incontinenza da traboccamento?",
+    hint: null,
+    answers: [
+      { label: "Sì — almeno 2 criteri di stipsi presenti", next: "DIAG:FC" },
+      { label: "No — non è stitichezza", next: "E3" }
+    ]
+  },
+  E3: {
+    step: "Diarrea funzionale",
+    breadcrumb: "Alvo",
+    text: "Ci sono evacuazioni INDOLORI e frequenti (≥4/die se <4 anni; >2/die se ≥4 anni) con almeno il 25% di feci non formate?",
+    hint: "FDr = diarrea senza dolore significativo. Se c'è dolore associato → IBS-D.",
+    answers: [
+      { label: "Sì — diarrea frequente indolore", next: "DIAG:FDR" },
+      { label: "No", next: "E4" }
+    ]
+  },
+  E4: {
+    step: "Incontinenza",
+    breadcrumb: "Alvo",
+    text: "Il bambino (già continente) defeca in luoghi inappropriati senza evidenza di ritenzione fecale e non intenzionalmente?",
+    hint: null,
+    answers: [
+      { label: "Sì — incontinenza senza ritenzione fecale", next: "DIAG:NRFI" },
+      { label: "No", next: "E5" }
+    ]
+  },
+  E5: {
+    step: "Dyschezia",
+    breadcrumb: "Alvo",
+    text: "Il bambino è un lattante <9 mesi con sforzo visibile per ≥10 minuti per defecare, passando poi feci MORBIDE?",
+    hint: null,
+    answers: [
+      { label: "Sì — lattante con sforzo e feci morbide", next: "DIAG:DYSCHEZIA" },
+      { label: "No", next: "FOLLOWUP" }
+    ]
+  },
+
+  // ─── RAMO F ────────────────────────────────────────────
+  F1: {
+    step: "Gonfiore predominante",
+    breadcrumb: "Gonfiore/distensione",
+    text: "Il gonfiore/distensione addominale è il sintomo PREDOMINANTE, si verifica in modo intermittente almeno 4 giorni/mese, e i criteri per IBS, FC, FDr e aerofagia NON sono soddisfatti?",
+    hint: null,
+    answers: [
+      { label: "Sì — gonfiore/distensione predominante e intermittente", next: "DIAG:FAB" },
+      { label: "No — il gonfiore è secondario ad altro disturbo", next: "START" }
+    ]
+  },
+
+  // ─── RAMO G ────────────────────────────────────────────
+  G1: {
+    step: "Belching — tipo",
+    breadcrumb: "Belching eccessivo",
+    text: "Come si presenta il belching?",
+    hint: null,
+    answers: [
+      { label: "Episodi di belching ripetitivi fuori dai pasti, NON durante il sonno", next: "DIAG:SGB" },
+      { label: "Distensione addominale progressiva durante il giorno + flatulenza/belching", next: "DIAG:AEROPHAGIA" }
+    ]
+  },
+
+  // ─── RAMO H ────────────────────────────────────────────
+  H1: {
+    step: "Proctalgia",
+    breadcrumb: "Dolore anorectale",
+    text: "Il dolore anorectale è intermittente (dura secondi-minuti), NON è correlato alla defecazione, e il paziente è completamente libero dal dolore tra gli episodi?",
+    hint: null,
+    answers: [
+      { label: "Sì — tutte le caratteristiche presenti", next: "DIAG:PF" },
+      { label: "No — il dolore ha caratteristiche diverse", next: "STOP_ORGANIC" }
+    ]
+  },
+
+  // ─── RAMO I ────────────────────────────────────────────
+  I1: {
+    step: "Lattante che piange",
+    breadcrumb: "Pianto lattante",
+    text: "Il lattante ha meno di 5 mesi e presenta periodi ricorrenti e prolungati di pianto/agitazione senza causa apparente, che i caregiver non riescono a prevenire o risolvere?",
+    hint: null,
+    answers: [
+      { label: "Sì — lattante <5 mesi, pianto inspiegabile ricorrente", next: "DIAG:IDS" },
+      { label: "No — il bambino ha >5 mesi o c'è una causa identificabile", next: "STOP_ORGANIC" }
+    ]
+  },
+
+  // ─── SPECIALI ──────────────────────────────────────────
+  STOP_ORGANIC: {
+    step: "Valutazione organica",
+    breadcrumb: "",
+    text: "Le caratteristiche descritte suggeriscono una causa organica o non soddisfano i criteri DGBI. È necessario un approfondimento diagnostico prima di procedere.",
+    hint: null,
+    answers: [
+      { label: "↺ Ricomincia dall'inizio", next: "RESTART" }
+    ]
+  },
+
+  FOLLOWUP: {
+    step: "Follow-up",
+    breadcrumb: "",
+    text: "I criteri DGBI non sono ancora soddisfatti (durata o frequenza insufficienti). Rivalutare il paziente dopo 4-8 settimane o se i sintomi persistono/evolvono.",
+    hint: null,
+    answers: [
+      { label: "↺ Ricomincia dall'inizio", next: "RESTART" }
+    ]
+  },
+  RH_PENDING: {
+    step: "Valutazione endoscopia/pH-impedenza",
+    breadcrumb: "",
+    text: " Sono necessari approfondimenti diagnostici come valutazione gastroeneterologica pediatrica per eventuale EGDS e/o Ph-impedenzometria.",
+    hint: null,
+    answers: [
+      { label: "↺ Ricomincia dall'inizio", next: "RESTART" }
+    ]
+  }
+
+
+};
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let history = [];
+let currentNode = 'START';
+let checkedAlarms = new Set();
+const TOTAL_DEPTH = 8; // approximate max steps for progress
+
+// ═══════════════════════════════════════════════════════════
+// ALARM SCREEN
+// ═══════════════════════════════════════════════════════════
+function startAlarm() {
+  showScreen('screen-alarm');
+  document.getElementById('btnRestart').classList.add('visible');
+  document.getElementById('progressBar').classList.add('visible');
+  renderAlarms();
+}
+
+function renderAlarms() {
+  const grid = document.getElementById('alarmGrid');
+  grid.innerHTML = '';
+  ALARMS.forEach((alarm, i) => {
+    const item = document.createElement('div');
+    item.className = 'alarm-item' + (checkedAlarms.has(i) ? ' checked' : '');
+    item.innerHTML = `
+      <div class="alarm-checkbox"><div class="alarm-checkbox-inner"></div></div>
+      <div class="alarm-item-text">${alarm}</div>`;
+    item.onclick = () => toggleAlarm(i);
+    grid.appendChild(item);
+  });
+  updateAlarmResult();
+}
+
+function toggleAlarm(idx) {
+  if (checkedAlarms.has(idx)) checkedAlarms.delete(idx);
+  else checkedAlarms.add(idx);
+  renderAlarms();
+}
+
+function updateAlarmResult() {
+  const result = document.getElementById('alarmResult');
+  const btn = document.getElementById('btnAlarmNext');
+  if (checkedAlarms.size > 0) {
+    result.className = 'alarm-result danger';
+    result.innerHTML = `<strong>⚠ ${checkedAlarms.size} segnale${checkedAlarms.size > 1 ? 'i' : ''} di allarme presente${checkedAlarms.size > 1 ? 'i' : ''}</strong>Prima di procedere con la diagnosi DGBI è necessario escludere una causa organica. Considerare ulteriori accertamenti.`;
+    btn.style.display = 'none';
+  } else {
+    result.className = 'alarm-result safe';
+    result.innerHTML = `<strong>✓ Nessun segnale di allarme selezionato</strong>È possibile procedere con la valutazione DGBI.`;
+    btn.style.display = 'block';
+  }
+}
+
+function handleAlarmNext() {
+  if (checkedAlarms.size > 0) {
+    const alarmNames = [...checkedAlarms].map(i => ALARMS[i]);
+    const list = document.getElementById('stopAlarmsList');
+    list.innerHTML = alarmNames.map(a => `<div class="stop-alarm-tag">${a}</div>`).join('');
+    showScreen('screen-stop');
+  } else {
+    startFlowchart();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// FLOWCHART
+// ═══════════════════════════════════════════════════════════
+function startFlowchart() {
+  history = [];
+  currentNode = 'START';
+  renderQuestion('START');
+}
+
+function renderQuestion(nodeId) {
+  const node = NODES[nodeId];
+  if (!node) return;
+
+  showScreen('screen-question');
+  updateProgress();
+
+  document.getElementById('qStepLabel').textContent = node.step || '';
+  document.getElementById('qBreadcrumb').textContent = node.breadcrumb ? '› ' + node.breadcrumb : '';
+
+  const qText = document.getElementById('qText');
+  qText.textContent = node.text;
+
+  const qHint = document.getElementById('qHint');
+  if (node.hint) {
+    qHint.textContent = node.hint;
+    qHint.style.display = 'block';
+  } else {
+    qHint.style.display = 'none';
+  }
+
+  const grid = document.getElementById('answerGrid');
+  grid.innerHTML = '';
+  const prefixes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+  node.answers.forEach((ans, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.innerHTML = `<div class="answer-prefix">${prefixes[i] || i+1}</div><span>${ans.label}</span>`;
+    btn.onclick = () => handleAnswer(nodeId, ans.next);
+    grid.appendChild(btn);
+  });
+
+  const btnBack = document.getElementById('btnBack');
+  btnBack.style.display = history.length > 0 ? 'flex' : 'none';
+}
+
+function handleAnswer(fromNode, nextNode) {
+  if (nextNode === 'RESTART') { restart(); return; }
+
+  history.push(fromNode);
+  currentNode = nextNode;
+
+  if (nextNode.startsWith('DIAG:')) {
+    const diagKey = nextNode.replace('DIAG:', '');
+    showDiagnosis(diagKey);
+  } else {
+    renderQuestion(nextNode);
+  }
+}
+
+function goBack() {
+  if (history.length === 0) {
+    showScreen('screen-alarm');
+    return;
+  }
+  const prev = history.pop();
+  currentNode = prev;
+  if (prev === 'ALARM') {
+    showScreen('screen-alarm');
+  } else {
+    renderQuestion(prev);
+  }
+}
+
+function updateProgress() {
+  const pct = Math.min(95, (history.length / TOTAL_DEPTH) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// ═══════════════════════════════════════════════════════════
+// DIAGNOSIS SCREEN
+// ═══════════════════════════════════════════════════════════
+function showDiagnosis(key) {
+  // Special case: BPS pending eco
+  let diagKey = key;
+  let extraNote = null;
+  if (key === 'BPS_ECO') {
+    diagKey = 'BPS';
+    extraNote = '⚠ Attenzione: è necessario eseguire un\'ecografia colecisti e vie biliari per confermare l\'assenza di calcoli biliari prima di formulare questa diagnosi.';
+  }
+  if (key === 'HDD_R') diagKey = 'HDD_R_DISPLAY';
+  if (key === 'HDD_E') diagKey = 'HDD_E_DISPLAY';
+
+  // HDD subtypes — use generic HDD data with note
+  const HDD_R_DATA = {
+    title: "Hunger Dysregulation — Ridotta Hunger Drive",
+    code: "G2c.i · Roma V — Nuovo",
+    summary: "Il paziente non sente fame spontaneamente e non mangerebbe se non venisse sollecitato o programmato il pasto.",
+    tabs: DIAGNOSES['HD'] ? {} : {}
+  };
+  const HDD_E_DATA = {
+    title: "Hunger Dysregulation — Eccessiva Hunger Drive",
+    code: "G2c.ii · Roma V — Nuovo",
+    summary: "Il paziente ha un impulso eccessivo a mangiare — incapacità di smettere di mangiare dopo un pasto, alimentazione continua tra i pasti.",
+    tabs: {}
+  };
+
+  let data = DIAGNOSES[diagKey] || DIAGNOSES[key];
+  if (key === 'HDD_R') data = {
+    title: "Hunger Dysregulation — Ridotta Hunger Drive",
+    code: "G2c.i · Roma V — Nuovo",
+    summary: "Il paziente non sente fame spontaneamente e non mangerebbe senza sollecitazione o programmazione dei pasti.",
+    tabs: {
+      "Criteri": `<div class="info-list"><div class="info-item"><div class="info-item-dot dot-blue"></div>Il paziente non mangia/beve volontariamente cibi appropriati dopo periodi di digiuno adeguati all'età</div><div class="info-item"><div class="info-item-dot dot-blue"></div>Richiede sollecitazione e/o programmazione dei pasti per garantire un'adeguata assunzione</div></div>`,
+      "Esami": `<div style="display:flex;flex-direction:column;gap:6px"><div class="exam-item required">Calprotectina fecale, VES, PCR</div><div class="exam-item">Eventuale EGD superiore</div></div>`,
+      "Terapia": `<div class="therapy-block"><div class="therapy-item">Ciproeptadina: aumenta appetito e accomodazione gastrica</div><div class="therapy-item">Neuromodulatori (TCA, gabapentin, mirtazapina) in piccole serie</div><div class="therapy-item">Trattamento delle condizioni di salute mentale sottostanti</div></div>`
+    }
+  };
+  if (key === 'HDD_E') data = {
+    title: "Hunger Dysregulation — Eccessiva Hunger Drive",
+    code: "G2c.ii · Roma V — Nuovo",
+    summary: "Impulso eccessivo a mangiare: incapacità di smettere di mangiare dopo un pasto, alimentazione continua tra i pasti.",
+    tabs: {
+      "Criteri": `<div class="info-list"><div class="info-item"><div class="info-item-dot dot-blue"></div>Incapacità di smettere di mangiare anche dopo aver terminato un pasto completo</div><div class="info-item"><div class="info-item-dot dot-blue"></div>Alimentazione eccessiva tra i pasti anche dopo pasto completo</div></div>`,
+      "Esami": `<div class="exam-item">Nessun esame aggiuntivo oltre agli esami generali di base</div>`,
+      "Terapia": `<div class="therapy-block"><div class="therapy-item">Combinazione di gestione medica dei segnali di fame e controlli comportamentali ambientali rigidi</div><div class="therapy-item">Trattamento delle condizioni di salute mentale sottostanti</div></div>`
+    }
+  };
+
+  if (!data) {
+    console.warn('No diagnosis data for key:', key);
+    return;
+  }
+
+  showScreen('screen-diagnosis');
+  document.getElementById('progressFill').style.width = '100%';
+
+  document.getElementById('diagTitle').textContent = data.title;
+  document.getElementById('diagCode').textContent = data.code;
+
+  let summaryHTML = data.summary;
+  if (extraNote) summaryHTML = data.summary + `<br><br><em style="color:var(--gold)">${extraNote}</em>`;
+  document.getElementById('diagSummary').innerHTML = summaryHTML;
+
+  // Build tabs
+  const tabBar = document.getElementById('tabBar');
+  const tabContents = document.getElementById('tabContents');
+  tabBar.innerHTML = '';
+  tabContents.innerHTML = '';
+
+  // Close drawer
+  document.getElementById('detailDrawer').classList.remove('open');
+  document.getElementById('btnDeep').classList.remove('open');
+
+  const tabs = data.tabs || {};
+  const tabKeys = Object.keys(tabs);
+  if (tabKeys.length === 0) {
+    document.getElementById('btnDeep').style.display = 'none';
+  } else {
+    document.getElementById('btnDeep').style.display = 'flex';
+    tabKeys.forEach((name, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+      btn.textContent = name;
+      btn.onclick = () => switchTab(name);
+      tabBar.appendChild(btn);
+
+      const content = document.createElement('div');
+      content.className = 'tab-content' + (i === 0 ? ' active' : '');
+      content.id = 'tab-' + name;
+      content.innerHTML = tabs[name];
+      tabContents.appendChild(content);
+    });
+  }
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent === name));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + name));
+}
+
+function toggleDetail() {
+  const drawer = document.getElementById('detailDrawer');
+  const btn = document.getElementById('btnDeep');
+  const isOpen = drawer.classList.contains('open');
+  drawer.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  if (!isOpen) drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ═══════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function restart() {
+  history = [];
+  currentNode = 'START';
+  checkedAlarms = new Set();
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('btnRestart').classList.remove('visible');
+  document.getElementById('progressBar').classList.remove('visible');
+  showScreen('screen-welcome');
+}
+</script>
+</body>
+</html>
